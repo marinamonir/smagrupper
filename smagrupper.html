@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smågrupper – Registrering</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFEF9;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --dark: #1E1A14;
+    --mid: #5C5040;
+    --soft: #9C8A72;
+    --border: #E2D9CC;
+    --accent: #6B8F71;
+    --accent-light: #EDF3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+  /* ── LANGUAGE TOGGLE ── */
+  .lang-bar {
+    background: var(--dark);
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 24px;
+    gap: 4px;
+  }
+  .lang-btn {
+    padding: 5px 14px;
+    border: 1.5px solid rgba(201,168,76,0.4);
+    border-radius: 20px;
+    background: none;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--dark);
+  }
+  .lang-btn:hover:not(.active) { color: var(--gold-light); border-color: var(--gold-light); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    padding: 48px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 25% 60%, rgba(201,168,76,0.13) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 25%, rgba(107,143,113,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-rule { width: 40px; height: 1px; background: var(--gold); margin: 0 auto 20px; opacity: 0.7; }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5.5vw, 46px);
+    color: var(--warm-white); font-weight: 700; line-height: 1.15; margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--gold-light); }
+  .hero p { font-size: 15px; color: rgba(255,255,255,0.5); font-weight: 300; max-width: 420px; margin: 0 auto; line-height: 1.7; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 680px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; margin: 36px 0 0; border-bottom: 2px solid var(--border); }
+  .tab-btn {
+    flex: 1; padding: 14px 12px; background: none; border: none;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.8px; text-transform: uppercase; color: var(--soft);
+    cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn.active { color: var(--dark); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--mid); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--soft); margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 20px; }
+  label.field-label { display: block; font-size: 13px; font-weight: 700; color: var(--mid); margin-bottom: 7px; letter-spacing: 0.3px; }
+  .req { color: var(--gold); margin-left: 2px; }
+  .hint { font-weight: 300; color: var(--soft); font-size: 12px; margin-left: 6px; text-transform: none; letter-spacing: 0; }
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 6px;
+    font-family: 'Lato', sans-serif; font-size: 15px; color: var(--dark);
+    background: var(--warm-white); transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type=number] { -moz-appearance: textfield; }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--soft); pointer-events: none; font-size: 13px; }
+  .select-wrap select { padding-right: 36px; cursor: pointer; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── CHECK GRID ── */
+  .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 9px; margin-top: 2px; }
+  .check-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 13px;
+    border: 1.5px solid var(--border); border-radius: 6px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s; background: var(--warm-white); user-select: none;
+  }
+  .check-item:hover { border-color: var(--gold-light); background: #FFFBF4; }
+  .check-item input { width: 15px; height: 15px; flex-shrink: 0; accent-color: var(--gold); cursor: pointer; }
+  .check-item:has(input:checked) { border-color: var(--gold); background: #FFFBF0; }
+  .check-item span { font-size: 14px; color: var(--mid); line-height: 1.3; }
+  .check-item:has(input:checked) span { color: var(--dark); font-weight: 700; }
+
+  /* ── PILL ROW ── */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 2px; }
+  .pill-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer;
+    background: var(--warm-white); transition: border-color 0.15s, background 0.15s; user-select: none;
+  }
+  .pill-item:hover { border-color: var(--gold-light); }
+  .pill-item input { accent-color: var(--gold); cursor: pointer; }
+  .pill-item:has(input:checked) { border-color: var(--gold); background: #FFFBF0; }
+  .pill-item span { font-size: 14px; color: var(--mid); }
+  .pill-item:has(input:checked) span { color: var(--dark); font-weight: 700; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--accent-light); border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0; padding: 13px 16px; font-size: 13px;
+    color: #3A5C3F; line-height: 1.6; margin-bottom: 0;
+  }
+
+  /* ── DAG + TID GRID ── */
+  .day-time-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 2px;
+  }
+  @media (max-width: 520px) { .day-time-grid { grid-template-columns: 1fr; } }
+  .day-time-col label.sub-label {
+    display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--soft); margin-bottom: 10px;
+  }
+  .day-time-col .pill-row { flex-direction: column; gap: 7px; }
+  .day-time-col .pill-item { justify-content: flex-start; }
+
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width: 100%; margin-top: 32px; padding: 16px; background: var(--dark);
+    color: var(--gold-light); border: none; border-radius: 8px;
+    font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s, transform 0.1s;
+  }
+  .submit-btn:hover { background: #2E2820; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(232,201,122,0.3); border-top-color: var(--gold-light); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SUCCESS ── */
+  .success-msg { display: none; text-align: center; padding: 48px 20px; animation: fadeIn 0.4s ease; }
+  .success-icon { width: 56px; height: 56px; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 22px; color: var(--gold); }
+  .success-msg h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--dark); margin-bottom: 10px; }
+  .success-msg p { color: var(--soft); font-size: 15px; line-height: 1.6; }
+
+  .error-msg { display: none; background: #FEF2F2; border-left: 3px solid #C0392B; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 13px; color: #7B1F1F; margin-top: 16px; line-height: 1.5; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .add-member-btn {
+    margin-top: 6px; padding: 8px 18px; background: none;
+    border: 1.5px solid var(--gold); border-radius: 6px;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--gold); cursor: pointer; transition: background 0.15s;
+  }
+  .add-member-btn:hover { background: rgba(201,168,76,0.08); }
+
+  /* ── LANGUAGE VISIBILITY ── */
+  .sv, .en { display: none; }
+  body.lang-sv .sv { display: revert; }
+  body.lang-en .en { display: revert; }
+  body.lang-sv .sv.inline { display: inline; }
+  body.lang-en .en.inline { display: inline; }
+  /* For block-level elements that are spans inside labels */
+  label .sv, label .en { display: none; }
+  body.lang-sv label .sv { display: inline; }
+  body.lang-en label .en { display: inline; }
+  /* Pills and check-items always visible, but text inside them swaps */
+  .pill-item, .check-item { display: flex !important; }
+</style>
+</head>
+<body class="lang-sv">
+
+<!-- LANGUAGE BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('sv', this)">SV</button>
+  <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-rule"></div>
+  <h1>
+    <span class="sv">Hitta din<br><span style="color:var(--gold-light)">smågrupp</span></span>
+    <span class="en">Find your<br><span style="color:var(--gold-light)">small group</span></span>
+  </h1>
+  <p>
+    <span class="sv">Registrera din smågrupp — eller anmäl ditt intresse och hitta en grupp som passar dig.</span>
+    <span class="en">Register your small group — or express your interest and find a group that suits you.</span>
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-ledare" onclick="switchTab('ledare', this)">
+      <span class="sv">Registrera en grupp</span>
+      <span class="en">Register a group</span>
+    </button>
+    <button class="tab-btn" id="tab-sokande" onclick="switchTab('sokande', this)">
+      <span class="sv">Jag söker en grupp</span>
+      <span class="en">I'm looking for a group</span>
+    </button>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       PANEL 1: LEDARE
+  ══════════════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-ledare">
+    <div style="margin-top:28px;"></div>
+
+    <form id="form-ledare" onsubmit="handleSubmit(event,'ledare')">
+      <input type="hidden" name="Formulärtyp" value="Ledare – registrering">
+
+      <!-- Om ledaren -->
+      <div class="section-label"><span class="sv">Om dig som ledare</span><span class="en">About you as a leader</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label"><span class="sv">Namn</span><span class="en">Name</span> <span class="req">*</span></label>
+          <input type="text" name="Namn" data-ph-sv="Förnamn Efternamn" data-ph-en="First Last" placeholder="Förnamn Efternamn" required>
+        </div>
+        <div class="field">
+          <label class="field-label"><span class="sv">E-post</span><span class="en">Email</span> <span class="req">*</span></label>
+          <input type="email" name="E-post" placeholder="din@epost.se" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Telefon</span><span class="en">Phone</span> </label>
+        <input type="tel" name="Telefon" placeholder="+46 70 000 00 00">
+      </div>
+
+      <!-- Om gruppen -->
+      <div class="section-label"><span class="sv">Om gruppen</span><span class="en">About the group</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Gruppens namn</span><span class="en">Group name</span></label>
+        <input type="text" name="Gruppnamn" data-ph-sv="t.ex. Tisdagsgruppen" data-ph-en="e.g. Tuesday Group" placeholder="t.ex. Tisdagsgruppen">
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="sv">Typ av grupp</span><span class="en">Group type</span> <span class="req">*</span></label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="Typ" value="Barnfamilj"><span><span class="sv">Barnfamilj</span><span class="en">Family with children</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Bönegrupp"><span><span class="sv">Bönegrupp</span><span class="en">Prayer group</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Mitt i livet"><span><span class="sv">Mitt i livet</span><span class="en">Mid-life</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Online / distans"><span><span class="sv">Online / distans</span><span class="en">Online / remote</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Par"><span><span class="sv">Par</span><span class="en">Couples</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Senior"><span><span class="sv">Senior</span><span class="en">Senior</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Tonårsföräldrar"><span><span class="sv">Tonårsföräldrar</span><span class="en">Parents of teens</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Unga och vuxna – blandad"><span><span class="sv">Unga och vuxna – blandad</span><span class="en">Young adults – mixed</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Unga och vuxna – killar"><span><span class="sv">Unga och vuxna – killar</span><span class="en">Young adults – men</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Typ" value="Unga och vuxna – tjejer"><span><span class="sv">Unga och vuxna – tjejer</span><span class="en">Young adults – women</span></span></label>
+        </div>
+      </div>
+
+      <!-- Praktiskt -->
+      <div class="section-label"><span class="sv">Praktisk information</span><span class="en">Practical information</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label"><span class="sv">Stad / Område</span><span class="en">City / Area</span> <span class="req">*</span></label>
+          <input type="text" name="Stad" placeholder="t.ex. Stockholm, Södermalm" required>
+        </div>
+        <div class="field">
+          <label class="field-label"><span class="sv">Träffplats</span><span class="en">Meeting place</span></label>
+          <input type="text" name="Träffplats" data-ph-sv="t.ex. hemma, kyrkan" data-ph-en="e.g. home, church" placeholder="t.ex. hemma, kyrkan">
+        </div>
+      </div>
+
+      <!-- Dag + Tid side by side -->
+      <div class="field">
+        <label class="field-label"><span class="sv">Mötestid</span><span class="en">Meeting time</span></label>
+        <div class="day-time-grid">
+          <div class="day-time-col">
+            <label class="sub-label"><span class="sv">Dag</span><span class="en">Day</span></label>
+            <div class="pill-row">
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Måndag / Monday"><span><span class="sv">Måndag</span><span class="en">Monday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Tisdag / Tuesday"><span><span class="sv">Tisdag</span><span class="en">Tuesday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Onsdag / Wednesday"><span><span class="sv">Onsdag</span><span class="en">Wednesday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Torsdag / Thursday"><span><span class="sv">Torsdag</span><span class="en">Thursday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Fredag / Friday"><span><span class="sv">Fredag</span><span class="en">Friday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Lördag / Saturday"><span><span class="sv">Lördag</span><span class="en">Saturday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Söndag / Sunday"><span><span class="sv">Söndag</span><span class="en">Sunday</span></span></label>
+              <label class="pill-item"><input type="radio" name="Mötesdag" value="Varierar / Varies"><span><span class="sv">Varierar</span><span class="en">Varies</span></span></label>
+            </div>
+          </div>
+          <div class="day-time-col">
+            <label class="sub-label"><span class="sv">Tid på dagen</span><span class="en">Time of day</span></label>
+            <div class="pill-row">
+              <label class="pill-item"><input type="checkbox" name="Mötestid" value="Förmiddag / Morning"><span><span class="sv">Förmiddag</span><span class="en">Morning</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Mötestid" value="Eftermiddag / Afternoon"><span><span class="sv">Eftermiddag</span><span class="en">Afternoon</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Mötestid" value="Kväll / Evening"><span><span class="sv">Kväll</span><span class="en">Evening</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Mötestid" value="Varierar / Varies"><span><span class="sv">Varierar</span><span class="en">Varies</span></span></label>
+            </div>
+            <div style="margin-top:12px;">
+              <label class="field-label" style="font-size:11px;margin-bottom:5px;"><span class="sv">Klockslag (valfritt)</span><span class="en">Exact time (optional)</span></label>
+              <input type="text" name="Klockslag" placeholder="t.ex. 19:00–21:00" style="font-size:13px;padding:8px 12px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="sv">Frekvens</span><span class="en">Frequency</span></label>
+        <div class="select-wrap">
+          <select name="Frekvens" id="frekvens-select">
+            <option value="" data-sv="Välj..." data-en="Select...">Välj...</option>
+            <option value="Varje vecka" data-sv="Varje vecka" data-en="Every week">Varje vecka</option>
+            <option value="Varannan vecka" data-sv="Varannan vecka" data-en="Every other week">Varannan vecka</option>
+            <option value="En gång i månaden" data-sv="En gång i månaden" data-en="Once a month">En gång i månaden</option>
+            <option value="Annat" data-sv="Annat" data-en="Other">Annat</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Deltagare -->
+      <div class="section-label"><span class="sv">Deltagare</span><span class="en">Participants</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label"><span class="sv">Nuvarande antal deltagare</span><span class="en">Current number of members</span></label>
+          <input type="number" name="Antal deltagare" placeholder="t.ex. 8" min="1" max="99">
+        </div>
+        <div class="field">
+          <label class="field-label"><span class="sv">Max antal platser</span><span class="en">Maximum spots</span></label>
+          <input type="number" name="Max platser" placeholder="t.ex. 12" min="1" max="99">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="sv">Målgrupp – ålder</span><span class="en">Target age group</span></label>
+        <div class="pill-row">
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="18–25"><span>18–25</span></label>
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="25–35"><span>25–35</span></label>
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="35–50"><span>35–50</span></label>
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="50–65"><span>50–65</span></label>
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="65+"><span>65+</span></label>
+          <label class="pill-item"><input type="radio" name="Åldersgrupp" value="Blandad / Mixed"><span><span class="sv">Blandad ålder</span><span class="en">Mixed ages</span></span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="sv">Öppet för nya deltagare?</span><span class="en">Open for new members?</span></label>
+        <div class="pill-row">
+          <label class="pill-item"><input type="radio" name="Status" value="Öppen grupp / Open"><span><span class="sv">Öppen grupp</span><span class="en">Open group</span></span></label>
+          <label class="pill-item"><input type="radio" name="Status" value="Begränsat / Limited"><span><span class="sv">Begränsat antal platser</span><span class="en">Limited spots</span></span></label>
+          <label class="pill-item"><input type="radio" name="Status" value="Stängd / Closed"><span><span class="sv">Stängd just nu</span><span class="en">Closed for now</span></span></label>
+        </div>
+      </div>
+
+      <!-- Språk -->
+      <div class="section-label"><span class="sv">Språk</span><span class="en">Language</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Gruppens språk</span><span class="en">Group language(s)</span> <span class="req">*</span></label>
+        <div class="pill-row">
+          <label class="pill-item"><input type="checkbox" name="Språk" value="Svenska"><span><span class="sv">Svenska</span><span class="en">Swedish</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Språk" value="Engelska / English"><span><span class="sv">Engelska</span><span class="en">English</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Språk" value="Annat / Other"><span><span class="sv">Annat</span><span class="en">Other</span></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Ange språk</span><span class="en">Specify language</span> <span class="hint sv">(om annat valts)</span><span class="hint en">(if "other" selected)</span></label>
+        <input type="text" name="Annat språk" data-ph-sv="t.ex. Arabiska, Somaliska" data-ph-en="e.g. Arabic, Somali" placeholder="t.ex. Arabiska, Somaliska">
+      </div>
+
+
+      <!-- Gruppmedlemmar -->
+      <div class="section-label"><span class="sv">Gruppmedlemmar</span><span class="en">Group members</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Lägg till befintliga medlemmar</span><span class="en">Add existing members</span> <span class="hint sv">(valfritt)</span><span class="hint en">(optional)</span></label>
+        <div id="members-list-ledare">
+          <div class="member-row" style="display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:8px;margin-bottom:8px;align-items:center;">
+            <input type="text" name="Medlem namn" data-ph-sv="Namn" data-ph-en="Name" placeholder="Namn" style="font-size:13px;padding:8px 12px;">
+            <input type="number" name="Medlem ålder" placeholder="Ålder" min="13" max="110" style="font-size:13px;padding:8px 12px;">
+            <input type="text" name="Medlem område" data-ph-sv="Stad / Område" data-ph-en="City / Area" placeholder="Stad / Område" style="font-size:13px;padding:8px 12px;">
+            <button type="button" onclick="removeMember(this)" style="background:none;border:1.5px solid var(--border);border-radius:6px;width:36px;height:36px;cursor:pointer;color:var(--soft);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+          </div>
+        </div>
+        <button type="button" onclick="addMember()" class="add-member-btn">
+          <span class="sv">+ Lägg till medlem</span><span class="en">+ Add member</span>
+        </button>
+      </div>
+
+      <!-- Beskrivning -->
+      <div class="section-label"><span class="sv">Beskrivning</span><span class="en">Description</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Berätta om gruppen</span><span class="en">Tell us about the group</span> </label>
+        <textarea name="Beskrivning" data-ph-sv="Hur ser ert upplägg ut? Vilket fokus har gruppen?" data-ph-en="What does your setup look like? What is the group&apos;s focus?" placeholder="Hur ser ert upplägg ut? Vilket fokus har gruppen?"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Interna anteckningar</span><span class="en">Internal notes</span> </label>
+        <textarea name="Interna anteckningar" style="min-height:60px;" data-ph-sv="Noteringar för koordinatorer" data-ph-en="Notes for coordinators" placeholder="Noteringar för koordinatorer"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="btn-ledare">
+        <span class="btn-text sv">Registrera gruppen</span>
+        <span class="btn-text en">Register group</span>
+        <div class="spinner" id="spin-ledare"></div>
+      </button>
+      <div class="error-msg" id="err-ledare">
+        <span class="sv">Något gick fel. Kontrollera din internetanslutning och försök igen.</span>
+        <span class="en">Something went wrong. Please check your connection and try again.</span>
+      </div>
+    </form>
+
+    <div class="success-msg" id="success-ledare">
+      <div class="success-icon">✓</div>
+      <h2><span class="sv">Gruppen är registrerad!</span><span class="en">Group registered!</span></h2>
+      <p><span class="sv">Tack! Din grupp har nu sparats och koordinatorerna är informerade.</span><span class="en">Thank you! Your group has been saved and coordinators have been notified.</span></p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       PANEL 2: SÖKANDE
+  ══════════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-sokande">
+    <div class="info-box" style="margin-top:28px;">
+      <span class="sv">Fyll i vad du letar efter så hjälper vi dig hitta rätt grupp. Du kan välja flera alternativ.</span>
+      <span class="en">Fill in what you're looking for and we'll help you find the right group. You can select multiple options.</span>
+    </div>
+
+    <form id="form-sokande" onsubmit="handleSubmit(event,'sokande')">
+      <input type="hidden" name="Formulärtyp" value="Sökande – intresseanmälan">
+
+      <!-- Om dig -->
+      <div class="section-label"><span class="sv">Om dig</span><span class="en">About you</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label"><span class="sv">Namn</span><span class="en">Name</span> <span class="req">*</span></label>
+          <input type="text" name="Namn" data-ph-sv="Förnamn Efternamn" data-ph-en="First Last" placeholder="Förnamn Efternamn" required>
+        </div>
+        <div class="field">
+          <label class="field-label"><span class="sv">E-post</span><span class="en">Email</span> <span class="req">*</span></label>
+          <input type="email" name="E-post" placeholder="din@epost.se" required>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label"><span class="sv">Telefon</span><span class="en">Phone</span> <span class="hint sv">(valfritt)</span><span class="hint en">(optional)</span></label>
+          <input type="tel" name="Telefon" placeholder="+46 70 000 00 00">
+        </div>
+        <div class="field">
+          <label class="field-label"><span class="sv">Din ålder</span><span class="en">Your age</span> <span class="hint sv">(valfritt)</span><span class="hint en">(optional)</span></label>
+          <input type="number" name="Ålder" placeholder="t.ex. 34" min="13" max="110">
+        </div>
+      </div>
+
+      <!-- Vad söker du -->
+      <div class="section-label"><span class="sv">Vad söker du?</span><span class="en">What are you looking for?</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Grupptyp</span><span class="en">Group type</span> <span class="hint sv">(välj ett eller flera)</span><span class="hint en">(select one or more)</span></label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Barnfamilj"><span><span class="sv">Barnfamilj</span><span class="en">Family with children</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Bönegrupp"><span><span class="sv">Bönegrupp</span><span class="en">Prayer group</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Mitt i livet"><span><span class="sv">Mitt i livet</span><span class="en">Mid-life</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Online / distans"><span><span class="sv">Online / distans</span><span class="en">Online / remote</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Par"><span><span class="sv">Par</span><span class="en">Couples</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Senior"><span><span class="sv">Senior</span><span class="en">Senior</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Tonårsföräldrar"><span><span class="sv">Tonårsföräldrar</span><span class="en">Parents of teens</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Unga och vuxna – blandad"><span><span class="sv">Unga och vuxna – blandad</span><span class="en">Young adults – mixed</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Unga och vuxna – killar"><span><span class="sv">Unga och vuxna – killar</span><span class="en">Young adults – men</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Unga och vuxna – tjejer"><span><span class="sv">Unga och vuxna – tjejer</span><span class="en">Young adults – women</span></span></label>
+          <label class="check-item"><input type="checkbox" name="Önskad typ" value="Ingen preferens"><span><span class="sv">Ingen preferens</span><span class="en">No preference</span></span></label>
+        </div>
+      </div>
+
+      <!-- Praktiskt -->
+      <div class="section-label"><span class="sv">Praktiska preferenser</span><span class="en">Practical preferences</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Stad / Område</span><span class="en">City / Area</span> <span class="req">*</span></label>
+        <input type="text" name="Stad" data-ph-sv="t.ex. Göteborg, Hisingen" data-ph-en="e.g. Gothenburg, city area" placeholder="t.ex. Göteborg, Hisingen" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="sv">Föredragen mötestid</span><span class="en">Preferred meeting time</span></label>
+        <div class="day-time-grid">
+          <div class="day-time-col">
+            <label class="sub-label"><span class="sv">Dag</span><span class="en">Day</span></label>
+            <div class="pill-row">
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Måndag / Monday"><span><span class="sv">Måndag</span><span class="en">Monday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Tisdag / Tuesday"><span><span class="sv">Tisdag</span><span class="en">Tuesday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Onsdag / Wednesday"><span><span class="sv">Onsdag</span><span class="en">Wednesday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Torsdag / Thursday"><span><span class="sv">Torsdag</span><span class="en">Thursday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Fredag / Friday"><span><span class="sv">Fredag</span><span class="en">Friday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Lördag / Saturday"><span><span class="sv">Lördag</span><span class="en">Saturday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Söndag / Sunday"><span><span class="sv">Söndag</span><span class="en">Sunday</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad dag" value="Spelar ingen roll / Any day"><span><span class="sv">Spelar ingen roll</span><span class="en">Any day works</span></span></label>
+            </div>
+          </div>
+          <div class="day-time-col">
+            <label class="sub-label"><span class="sv">Tid på dagen</span><span class="en">Time of day</span></label>
+            <div class="pill-row">
+              <label class="pill-item"><input type="checkbox" name="Önskad tid" value="Förmiddag / Morning"><span><span class="sv">Förmiddag</span><span class="en">Morning</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad tid" value="Eftermiddag / Afternoon"><span><span class="sv">Eftermiddag</span><span class="en">Afternoon</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad tid" value="Kväll / Evening"><span><span class="sv">Kväll</span><span class="en">Evening</span></span></label>
+              <label class="pill-item"><input type="checkbox" name="Önskad tid" value="Spelar ingen roll / Any time"><span><span class="sv">Spelar ingen roll</span><span class="en">Any time works</span></span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Språk -->
+      <div class="section-label"><span class="sv">Språk</span><span class="en">Language</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Föredraget gruppspråk</span><span class="en">Preferred group language</span></label>
+        <div class="pill-row">
+          <label class="pill-item"><input type="checkbox" name="Önskat språk" value="Svenska"><span><span class="sv">Svenska</span><span class="en">Swedish</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Önskat språk" value="Engelska / English"><span><span class="sv">Engelska</span><span class="en">English</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Önskat språk" value="Annat / Other"><span><span class="sv">Annat</span><span class="en">Other</span></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Ange språk</span><span class="en">Specify language</span> <span class="hint sv">(om annat valts)</span><span class="hint en">(if "other" selected)</span></label>
+        <input type="text" name="Annat språk" data-ph-sv="t.ex. Arabiska" data-ph-en="e.g. Arabic" placeholder="t.ex. Arabiska">
+      </div>
+
+      <!-- Kontakt -->
+      <div class="section-label"><span class="sv">Övrigt</span><span class="en">Other</span></div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Berätta gärna mer om dig själv</span><span class="en">Tell us a bit about yourself</span></label>
+        <textarea name="Övrigt" data-ph-sv="Ny i tron? Har du barn? Ny i staden?" data-ph-en="New to faith? Have children? New to the city?" placeholder="Ny i tron? Har du barn? Ny i staden?"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label"><span class="sv">Hur vill du bli kontaktad?</span><span class="en">How would you like to be contacted?</span> <span class="hint sv">(välj ett eller flera)</span><span class="hint en">(select one or more)</span></label>
+        <div class="pill-row">
+          <label class="pill-item"><input type="checkbox" name="Kontaktsätt" value="E-post / Email"><span><span class="sv">E-post</span><span class="en">Email</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Kontaktsätt" value="Telefon / Phone call"><span><span class="sv">Telefon</span><span class="en">Phone call</span></span></label>
+          <label class="pill-item"><input type="checkbox" name="Kontaktsätt" value="SMS"><span>SMS</span></label>
+          <label class="pill-item"><input type="checkbox" name="Kontaktsätt" value="WhatsApp"><span>WhatsApp</span></label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="btn-sokande">
+        <span class="btn-text sv">Skicka intresseanmälan</span>
+        <span class="btn-text en">Submit interest</span>
+        <div class="spinner" id="spin-sokande"></div>
+      </button>
+      <div class="error-msg" id="err-sokande">
+        <span class="sv">Något gick fel. Kontrollera din internetanslutning och försök igen.</span>
+        <span class="en">Something went wrong. Please check your connection and try again.</span>
+      </div>
+    </form>
+
+    <div class="success-msg" id="success-sokande">
+      <div class="success-icon">✓</div>
+      <h2><span class="sv">Intresseanmälan mottagen!</span><span class="en">Interest received!</span></h2>
+      <p><span class="sv">Tack! En koordinator kontaktar dig inom kort med förslag på grupper som passar dig.</span><span class="en">Thank you! A coordinator will be in touch shortly with group suggestions that match your needs.</span></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPRAcjVgOdGb-b3mQcychIAqq4fgmIjRkwpNMaB6vRpnp0bK6_daWYMDJ3xv1lKrtWtQ/exec';
+
+  function setLang(lang, btn) {
+    document.body.className = 'lang-' + lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Swap placeholders
+    document.querySelectorAll('[data-ph-' + lang + ']').forEach(el => {
+      el.placeholder = el.getAttribute('data-ph-' + lang);
+    });
+    // Swap select option text
+    document.querySelectorAll('select option[data-' + lang + ']').forEach(opt => {
+      opt.textContent = opt.getAttribute('data-' + lang);
+    });
+    // Swap member row placeholders for dynamically added rows
+    currentLang = lang;
+  }
+
+  let currentLang = 'sv';
+  let memberCount = 1;
+
+  function addMember() {
+    memberCount++;
+    const container = document.getElementById('members-list-ledare');
+    const row = document.createElement('div');
+    row.className = 'member-row';
+    row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:8px;margin-bottom:8px;align-items:center;';
+    const phName = currentLang === 'en' ? 'Name' : 'Namn';
+    const phArea = currentLang === 'en' ? 'City / Area' : 'Stad / Område';
+    const phAge  = currentLang === 'en' ? 'Age' : 'Ålder';
+    const iStyle = 'font-size:13px;padding:8px 12px;width:100%;border:1.5px solid var(--border);border-radius:6px;font-family:Lato,sans-serif;color:var(--dark);background:var(--warm-white);';
+    const bStyle = 'background:none;border:1.5px solid var(--border);border-radius:6px;width:36px;height:36px;cursor:pointer;color:var(--soft);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+    row.innerHTML =
+      '<input type="text" name="Medlem namn" data-ph-sv="Namn" data-ph-en="Name" placeholder="' + phName + '" style="' + iStyle + '">' +
+      '<input type="number" name="Medlem ålder" placeholder="' + phAge + '" min="13" max="110" style="' + iStyle + '">' +
+      '<input type="text" name="Medlem område" data-ph-sv="Stad / Område" data-ph-en="City / Area" placeholder="' + phArea + '" style="' + iStyle + '">' +
+      '<button type="button" onclick="removeMember(this)" style="' + bStyle + '">×</button>';
+    container.appendChild(row);
+  }
+
+  function removeMember(btn) {
+    const rows = document.querySelectorAll('#members-list-ledare .member-row');
+    if (rows.length > 1) {
+      btn.closest('.member-row').remove();
+    } else {
+      // Clear the last row instead of removing it
+      btn.closest('.member-row').querySelectorAll('input').forEach(i => i.value = '');
+    }
+  }
+
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  async function handleSubmit(e, type) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('btn-' + type);
+    const spinner = document.getElementById('spin-' + type);
+    const errEl = document.getElementById('err-' + type);
+
+    const data = {};
+    const formData = new FormData(form);
+    // Collect member rows as structured entries
+    const memberRows = form.querySelectorAll('.member-row');
+    const members = [];
+    memberRows.forEach((row, i) => {
+      const namn = row.querySelectorAll('input')[0].value.trim();
+      const alder = row.querySelectorAll('input')[1].value.trim();
+      const omrade = row.querySelectorAll('input')[2].value.trim();
+      if (namn || alder || omrade) {
+        members.push((namn || '-') + ', ' + (alder || '-') + ' år, ' + (omrade || '-'));
+      }
+    });
+    for (const [key, value] of formData.entries()) {
+      if (['Medlem namn','Medlem ålder','Medlem område'].includes(key)) continue;
+      data[key] = data[key] ? data[key] + ', ' + value : value;
+    }
+    if (members.length) data['Gruppmedlemmar'] = members.join(' | ');
+    data['Tidsstämpel'] = new Date().toLocaleString('sv-SE');
+    data['Språk (formulär)'] = document.body.classList.contains('lang-en') ? 'EN' : 'SV';
+
+    btn.disabled = true;
+    btn.querySelectorAll('.btn-text').forEach(el => el.style.display = 'none');
+    spinner.style.display = 'block';
+    errEl.style.display = 'none';
+
+    try {
+      // Use hidden form + iframe to avoid redirect issues with Google Apps Script
+      const iframe = document.createElement('iframe');
+      iframe.name = 'submit-frame-' + Date.now();
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const hiddenForm = document.createElement('form');
+      hiddenForm.method = 'POST';
+      hiddenForm.action = APPS_SCRIPT_URL;
+      hiddenForm.target = iframe.name;
+      hiddenForm.style.display = 'none';
+
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify(data);
+      hiddenForm.appendChild(input);
+
+      document.body.appendChild(hiddenForm);
+      hiddenForm.submit();
+
+      // Clean up after a delay
+      setTimeout(() => {
+        hiddenForm.remove();
+        iframe.remove();
+      }, 5000);
+
+      form.style.display = 'none';
+      document.getElementById('success-' + type).style.display = 'block';
+    } catch (err) {
+      console.error('Submit error:', err);
+      btn.disabled = false;
+      btn.querySelectorAll('.btn-text').forEach(el => el.style.display = '');
+      spinner.style.display = 'none';
+      errEl.style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
